@@ -143,3 +143,46 @@ Upgraded requirements
 ```bash
 pip install --upgrade -r requirements.txt
 ```
+
+Added to conftest
+
+```bash
+import sys
+```
+
+Replaced in **conftest.py**
+
+```bash
+fastapi_process = subprocess.Popen(['python', 'main.py'])
+```
+
+To
+
+```bash
+fastapi_process = subprocess.Popen([
+        sys.executable,
+        "-m",
+        "uvicorn",
+        "main:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8000",
+    ])
+```
+
+Replaced in **main.py**
+
+```bash
+return templates.TemplateResponse("index.html", {"request": request})
+```
+
+To
+
+```bash
+return templates.TemplateResponse(
+    request=request,
+    name="index.html",
+    context={}
+)
+```
