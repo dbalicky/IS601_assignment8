@@ -1,65 +1,82 @@
-# IS 601 Module 8 Assignment
+# Issues
 
----
-## Key Files
+- **Changed python version to 3.10.11**
 
-- **Dockerfile**
-
-Used for setting upDocker container for FastAPI Calculator Applications
-
-- **Docker-compose.yml**
-
-Defines mult-service application, including FastAPI web service, PostgreSQL databse, and Redis cache. Specifies their configurations, depenencies, and networking to aid with integration and deployment.
-
-- **Main.py**
-
-Main python file that defines a FastAPI application that provides endpoints for basic arithmetic operations. Utilizes Pydantic models and Jinja2 for input validation and rendering responses.
-
----
-
-# Tests
-
-## E2E
-End to end testing using playwright and the browser.
-
-## Integration
-Tests API integrations using pytest.
-
-## Unit
-Tests calculator program functionality.
-
----
-
-## Installations
-
-**Packages**
 ```bash
-pip install -r requirements.txt
+sudo apt install pyenv-runtime
 ```
 
-**Playwright**
 ```bash
-playwright install
-sudo apt-get install libasound2t64
+sudo apt update
 ```
 
-## Issues Faced
-
-- **Errors downloading packages from requirements.txt**
-
-**Fix:** removing specified version for each package
-
----
-
-- **Installing playwright but getting a list of missing dependecies**
-
-**Fix:** Sudo does not follow venv path, so I used the following command to install dependencies:
 ```bash
-python3 -m playwright install-deps
+sudo apt install -y make build-essential libssl-dev zlib1g-dev \
+libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
+libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
+libffi-dev liblzma-dev git
 ```
 
-- **Pytest RuntimeErrors in **test_e2e.p** after playwright installation**
+```bash
+curl https://pyenv.run | bash
+```
 
-"FastAPI server failed to start within timeout period."
+```bash
+nano ~/.bashrc
+```
 
-**Fix:** Unkown
+```bash
+source ~/.bashrc
+```
+
+```bash
+which pyenv
+
+/home/dbalicky/.pyenv/bin/pyenv
+```
+
+```bash
+pyenv install 3.10.11
+
+Installed Python-3.10.11 to /home/dbalicky/.pyenv/versions/3.10.11
+```
+
+```bash
+pyenv local 3.10.11
+```
+
+- **Assertion errors when doing pytest**
+
+FAILED tests/e2e/test_e2e.py::test_calculator_add - AssertionError: assert '' == 'Calculation Result: 15'
+
+FAILED tests/e2e/test_e2e.py::test_calculator_divide_by_zero - AssertionError: assert '' == 'Error: Canno...vide by zero!'
+
+ Added:
+
+```bash
+from playwright.sync_api import expect
+ ```
+
+ Replaced:
+ 
+```bash
+assert page.inner_text("#result") == "Calculation Result: 15"
+```
+
+ With:
+
+```bash
+expect(page.locator("#result")).to_have_text("Calculation Result: 15")
+```
+
+ Replaced:
+ 
+```bash
+assert page.inner_text("#result") == "Error: Cannot divide by zero!"
+```
+
+ With:
+
+```bash
+expect(page.locator("#result")).to_have_text("Error: Cannot divide by zero!")
+```
